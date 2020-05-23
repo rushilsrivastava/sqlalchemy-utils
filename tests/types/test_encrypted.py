@@ -486,7 +486,7 @@ class TestAesGcmEngine(object):
         # 3rd char will be IV. Modify it
         POS = 3
         encrypted = encrypted[:POS] + \
-            ('A' if encrypted[POS] != 'A' else 'B') + \
+            (b'A' if encrypted[POS] != b'A' else b'B') + \
             encrypted[POS + 1:]
         with pytest.raises(InvalidCiphertextError):
             self.engine.decrypt(encrypted)
@@ -497,7 +497,7 @@ class TestAesGcmEngine(object):
         # 19th char will be tag. Modify it
         POS = 19
         encrypted = encrypted[:POS] + \
-            ('A' if encrypted[POS] != 'A' else 'B') + \
+            (b'A' if encrypted[POS] != b'A' else b'B') + \
             encrypted[POS + 1:]
         with pytest.raises(InvalidCiphertextError):
             self.engine.decrypt(encrypted)
@@ -508,7 +508,7 @@ class TestAesGcmEngine(object):
         # 43rd char will be ciphertext. Modify it
         POS = 43
         encrypted = encrypted[:POS] + \
-            ('A' if encrypted[POS] != 'A' else 'B') + \
+            (b'A' if encrypted[POS] != b'A' else b'B') + \
             encrypted[POS + 1:]
         with pytest.raises(InvalidCiphertextError):
             self.engine.decrypt(encrypted)

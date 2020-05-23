@@ -5,7 +5,7 @@ import json
 import os
 
 import six
-from sqlalchemy.types import String, TypeDecorator
+from sqlalchemy.types import LargeBinary, String, TypeDecorator
 
 from sqlalchemy_utils.exceptions import ImproperlyConfigured
 from sqlalchemy_utils.types.encrypted.padding import PADDING_MECHANISM
@@ -112,7 +112,7 @@ class AesEngine(EncryptionDecryptionBaseEngine):
         encryptor = self.cipher.encryptor()
         encrypted = encryptor.update(value) + encryptor.finalize()
         encrypted = base64.b64encode(encrypted)
-        return encrypted.decode('utf-8')
+        return encrypted
 
     def decrypt(self, value):
         if isinstance(value, six.text_type):
@@ -166,7 +166,7 @@ class AesGcmEngine(EncryptionDecryptionBaseEngine):
         encrypted = encryptor.update(value) + encryptor.finalize()
         assert len(encryptor.tag) == self.TAG_SIZE_BYTES
         encrypted = base64.b64encode(iv + encryptor.tag + encrypted)
-        return encrypted.decode('utf-8')
+        return encrypted
 
     def decrypt(self, value):
         if isinstance(value, six.text_type):
@@ -210,12 +210,12 @@ class FernetEngine(EncryptionDecryptionBaseEngine):
             value = str(value)
         value = value.encode()
         encrypted = self.fernet.encrypt(value)
-        return encrypted.decode('utf-8')
+        return encrypted
 
     def decrypt(self, value):
         if isinstance(value, six.text_type):
             value = str(value)
-        decrypted = self.fernet.decrypt(value.encode())
+        decrypted = self.fernet.decrypt(value)
         if not isinstance(decrypted, six.string_types):
             decrypted = decrypted.decode('utf-8')
         return decrypted
@@ -346,7 +346,7 @@ class EncryptedType(TypeDecorator, ScalarCoercible):
 
     """
 
-    impl = String
+    impl = LargeBinary
 
     def __init__(self, type_in=None, key=None,
                  engine=None, padding=None, **kwargs):
